@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="es">
+
+    <head>
+        <title>Azure</title>
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+
+        <!--  CARGA DE ESTILOS CSS DE BOOTSTRAP -->
+        <link href="../static/css/bootstrap.min.css" rel="stylesheet"/>
+        <link href="../static/css/style_forms.css" rel="stylesheet"/>
+
+        <nav class="navbar navbar-expand navbar-light bg-light">
+            <div class="nav navbar-nav">
+                {% if tiUsuario == 'A' %}
+                  <a class="nav-item nav-link" href="/">Inicio</a>
+                  <a class="nav-item nav-link" href="#">WF. Negocios</a>
+                  <a class="nav-item nav-link" href="#">WF. Cobranzas</a>
+                  <a class="nav-item nav-link" href="#">WF.Riesgos</a>
+                  <a class="nav-item nav-link" href="#">WF.RRHH</a>
+                  <a class="nav-item nav-link" href="/lista_prospecto">Reporte de Prospectos</a>
+                  {% else %}
+                  <a class="nav-item nav-link" href="/">Inicio</a>
+                  <a class="nav-item nav-link" href="/lista_prospecto">Reporte de Prospectos</a>
+                  {% endif %}
+              </div>
+        </nav>
+    </head>
+
+    <body>
+
+        <br><br><br>
+        <div class="tabla-lista">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col"><center>Código</th></center>
+                                    <th scope="col">Documento</th>
+                                    <th scope="col">Nombres</th>
+                                    <th scope="col">Genero</th>
+                                    <th scope="col">F. de Nacimiento</th>
+                                    <th scope="col">Correo</th>
+                                    <th scope="col">Teléfono</th>
+                                    <th scope="col">Dirección</th>
+                                    <th scope="col"></th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for v_re_especi in v_rs_person %}
+                                <tr>
+                                    <td><center>{{ v_re_especi.co_prospe }}</td></center>
+                                    <td>{{ v_re_especi.co_docide }}</td> 
+                                    <td>{{ v_re_especi.no_apepat }} {{ v_re_especi.no_apemat }} {{ v_re_especi.no_nombre }}</td>
+                                    <td>
+                                        {% if v_re_especi.ti_genero == 'F' %}
+                                            Femenino
+                                        {% elif v_re_especi.ti_genero == 'M' %}
+                                            Masculino
+                                        {% else %}
+                                            Otro
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ v_re_especi.fe_nacimi}}</td>
+                                    <td>{{ v_re_especi.no_correo }}</td>
+                                    <td>{{ v_re_especi.nu_telefo }}</td>
+                                    <td>{{ v_re_especi.de_direcc }}</td>
+                                    {% if tiUsuario == 'A' %}
+                                    <td>
+                                        <span class="action_btn">
+                                            <a href="#">[Editar]</a><br>
+                                        </span> 
+                                    </td>
+                                    <td>
+                                        <span class="action_btn">
+                                            <a href="#">[Eliminar]</a>
+                                        </span> 
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </div>
+       
+    </body>
+
+
+    <script>
+
+        // Esperar a que el documento esté completamente cargado
+        document.addEventListener("DOMContentLoaded", function () {
+            // Obtener el formulario
+            const form = document.querySelector("form");
+
+            // Obtener el botón de enviar
+            const submitButton = form.querySelector("button[type='submit']");
+
+            // Agregar un evento 'submit' al formulario
+            form.addEventListener("submit", function (event) {
+                // Evitar que el formulario se envíe normalmente
+                event.preventDefault();
+
+                // Deshabilitar el botón de enviar mientras se procesa la solicitud
+                submitButton.disabled = true;
+
+                // Obtener los datos del formulario
+                const formData = new FormData(form);
+
+                // Determinar si es una solicitud de creación (POST) o actualización (PUT)
+                const coPerson = form.dataset.coPerson;
+                const method = coPerson ? "PUT" : "POST";
+                const url = coPerson ? `/persona/${coPerson}` : "/persona";
+
+                // Enviar la solicitud utilizando Fetch API
+                fetch(url, {
+                    method: method,
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Error al enviar el formulario");
+                    }
+                    // Si la solicitud se realiza con éxito, redirigir al usuario a la página principal
+                    window.location.href = "/persona";
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    // Habilitar el botón de enviar en caso de error
+                    submitButton.disabled = false;
+                });
+            });
+        });
+
+        // Obtener todos los enlaces con la clase "delete-link"
+        const deleteLinks = document.querySelectorAll(".delete-link");
+
+        deleteLinks.forEach(link => {
+            link.addEventListener("click", function(event) {
+                event.preventDefault(); // Evitar el comportamiento predeterminado de los enlaces
+                
+                const co_person = link.dataset.id; // Obtener el ID de la persona del atributo 'data-id' del enlace
+
+                // Confirmar si el usuario realmente quiere eliminar la persona
+                if (confirm("¿Estás seguro de que deseas eliminar el registro de esta persona?")) {
+                    // Enviar una solicitud DELETE al servidor
+                    fetch(`/persona/${co_person}`, {
+                        method: "DELETE"
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Error al eliminar el registro de esta persona");
+                        }
+                        // Si la eliminación es exitosa, recargar la página para mostrar los cambios actualizados
+                        window.location.href = "/persona";
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                    });
+                }
+            });
+        });
+
+    </script>
+
+    
+</html>

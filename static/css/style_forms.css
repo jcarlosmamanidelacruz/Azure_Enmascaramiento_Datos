@@ -1,0 +1,65 @@
+.tabla-lista {
+    max-width: auto;
+    margin: 0 auto;
+    border-collapse: collapse;
+    display: table; /* Asegura que la tabla se comporte como un bloque */
+}
+
+.tabla-lista tbody {
+    white-space: nowrap;
+}
+
+.tabla-lista td {
+    padding: 8px; /* Aumenta el espacio interno de las celdas */
+    border: 1px solid #ccc; /* Agrega un borde a las celdas */
+    background-color: #f9f9f9; /* Cambia el color de fondo de las celdas */
+    color: #333; /* Cambia el color del texto en las celdas */
+}
+
+.tabla-lista tbody tr:hover {
+    background-color: #e1e1e1;
+}
+
+.tabla-lista th {
+    text-align: center; /* Centra el texto dentro de las celdas de encabezado */
+}
+
+/* Resto de los estilos */
+.table_responsive {
+    max-width: 900px;
+    margin: auto;
+    border: 1px solid #00bcd4;
+    background-color: #efefef33;
+    padding: 15px;
+    overflow: auto;
+    border-radius: 4px;
+}
+
+.action_btn{ 
+    display: flex;
+    justify-content: center;
+    gap: 10px; 
+}
+
+.action_btn>a{
+    text-decoration: none;
+    color: #444;
+    background: #fff;
+    border: 1px solid;
+    display: inline-block;
+    padding: 7px 20px;
+    font-weight: bold;
+    border-radius: 3px;
+    transition: 0.3s ease-in-out;
+}
+
+.action_btn>a:nth-child(1){
+    border-color: #26a69a;
+}
+.action_btn>a:nth-child(2){
+    border-color: orange;
+}
+
+.action_btn>a:hover{
+    box-shadow: 0 3px 8px #0003; 
+}
